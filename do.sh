@@ -22,6 +22,10 @@ deleteInstance() {
     yc compute instance delete "$INSTANCE_NAME"
 }
 
+function get_field_value {
+    echo "${ACCESS_CONFIG}" | grep "$1" | sed "s/$1://"
+}
+
 while getopts ":i:t:dv" o; do
     case "${o}" in
         i)
@@ -93,16 +97,19 @@ done
 
 echo -n 'Configuring the server. It may take a couple of minutes... '
 
-ssh -T -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" yc-user@$ip <<EOF
+ssh -T -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" yc-user@$ip >/dev/null 2>&1 <<END
 wget https://raw.githubusercontent.com/Jigsaw-Code/outline-server/master/src/server_manager/install_scripts/install_server.sh
 yes | sudo bash ./install_server.sh
-EOF
+END
+
+ACCESS_CONFIG=$(ssh -T -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" yc-user@$ip sudo cat /opt/outline/access.txt 2>/dev/null)
+
+echo "To manage your Outline server, please copy the following line (including curly brackets) into Step 2 of the Outline Manager interface:"
+echo -e "\033[1;32m{\"apiUrl\":\"$(get_field_value apiUrl)\",\"certSha256\":\"$(get_field_value certSha256)\"}\033[0m"
 
 echo 'Press enter to remove the created instance (you have an hour), or Ctrl+C to keep at alive.'
 
-read -t 3600 user_input
-
-echo "$user_input"
+read -t 3600
 
 echo 'Removing the instance... '
 deleteInstance
