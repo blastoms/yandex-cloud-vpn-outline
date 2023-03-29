@@ -2,8 +2,8 @@
 
 ## What is it?
 
-There're days, when you need to access a web-site hosted in Russia, which has prevented the out-of-the-country access.
-Unfortunately, some of the utility providers do this, yet you still need to pay for the utilities when you have fled
+There are days, when you need to access a web-site hosted in Russia, which has prevented the out-of-the-country access.
+Unfortunately, some utility providers do this, yet you still need to pay for the utilities when you have fled
 the country.
 
 Yandex.Cloud allows you to create a low-cost preemptive virtual machine for under a rouble per hour. Instruction and the
@@ -16,37 +16,20 @@ script in this repo help you create such a virtual machine.
 3. Install [yc](https://cloud.yandex.com/en/docs/cli/quickstart).
 4. Restart your shell to make `yc` command available.
 5. Configure `yc` by calling `yc init`.
-6. [Install Wireguard](https://www.wireguard.com/install/) on the device where you want to use VPN.
+6. [Install Outline Manager and Outline Client](https://getoutline.org/get-started/) on the device where you want to use VPN.
 7. Ensure you have an SSH-key generated, with public key saved as `~/.ssh/id_rsa.pub`.
 8. Download [do.sh](./do.sh) and run it, following the on-screen instructions. Keep the script running for now.
-9. Configure your WireGuard client using the config displayed by the script.
-10. When you're finished, press Enter in the terminal where you have the script running. It should remove the created virtual machine. Check that the server was removed from [Yandex Cloud](https://console.cloud.yandex.ru/).
+9. Open Outline Manager, choose *"Set up Outline anywhere"* and copy the config displayed by the script (including curly brackets) into Step 2.
+10. Copy created "Access key" of the server from Outline Manager.
+11. Open Outline Client, add server, paste copied "Access key" and connect to VPN.
+12. When you're finished, press "Enter" in the terminal where you have the script running. It should remove the created virtual machine. Check that the server was removed from [Yandex Cloud](https://console.cloud.yandex.ru/).
 
-By default the command will generate a wireguard config for 1 client, using the
-subnet `192.168.55.0/24`. You can override the defaults by calling the script
-with the arguments: `./do.sh -c 10 -a 10.0.0` — this will generate config for 10
-clients with subnet `10.0.0.0/24`.
-
-It is also possible to request displaying the config as a QR-code, which can be
-useful when you need to configure VPN on mobile clients. Pass argument `-q 1` to
-generate one client config with the QR code, `-q 2` to generate two codes and so
-on. The value passed to `-q` argument must be greater than or equal to the value
-passed to `-c`.
-
-Below is the example produced by this script (so you'll know what to look for in
-the output):
-
-```ini
-[Interface]
-Address = 10.10.10.2/24
-DNS = 8.8.8.8
-PrivateKey = cGiXg4D1SHlvyxqRCeuwxXil9UeMgdfw4WqqNwvZ+ls=
-
-[Peer]
-PublicKey = WtPF2qWwDlGSjfo0SJu3kr6FeB/csBXBmD+L72/j8mc=
-AllowedIPs = 0.0.0.0/0, ::/0
-Endpoint = 62.84.2.1:43517
-PersistentKeepalive = 30
+Below is the example produced by this script (so you'll know what to look for in the output):
+```json
+{"apiUrl":"https://51.250.74.81:61648/ui2mtnfFtm-awV8pbIcVQQ","certSha256":"FA3A90DD2C1ADCF13B724872C784C44DC71D28B7A3A927A52172F774363A6F71"}
 ```
 
-You need to add this config into your wireguard client and activate the connection.
+Example of "Access key" of the server from Outline Manager:
+```text
+ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTpsQVY3S00wSTB1bWdCZG16ZmxXNG5G@51.250.74.81:45142/?outline=1
+```
